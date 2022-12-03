@@ -1,0 +1,21 @@
+name: Linters
+
+on: [push, pull_request]
+
+env:
+  FORCE_COLOR: 1
+
+jobs:
+  tslint:
+    name: TSLint
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+      - name: Setup TSLint
+        run: |
+          npm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint typescript [ -f .eslintrc.json ]
+      - name: TSLint Report
+        run: npx eslint .
