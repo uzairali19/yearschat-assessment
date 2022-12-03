@@ -1,5 +1,7 @@
+import { Welcome } from "./welcome";
+
 function Body() {
-    return <div>Body</div>;
+    return <Welcome />;
 }
 
 export default Body;
