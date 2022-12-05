@@ -1,18 +1,26 @@
+import {useState} from 'react'
 
+interface chatProps {
+    socket: any;
+}
 
-function Chat() {
+const Chat: React.FC<chatProps> = ({socket}) => {
+    const [message, setMessage] = useState('')
+
+    const sendMessage = () => {
+        socket.emit('send-message', message)
+        setMessage('')
+    }
     return (
         <div className="container mx-auto flex flex-col justify-between min-h-[90vh] h-full">
             <div className="flex flex-col h-full">
                 <div className="flex-1 overflow-y-scroll">
-                    <h3>User 1</h3>
-                    <p>Message 1</p>
-                    <h3>User 2</h3>
-                    <p>Message 2</p>
-                    <h3>User 1 edited</h3>
-                    <p>Message 1 edited</p>
-                    <h3>User 2</h3>
-                    <p>This message has been deleted</p>
+                    <div className="chat chat-start">
+                        <div className="chat-bubble">It's over Anakin, <br/>I have the high ground.</div>
+                    </div>
+                    <div className="chat chat-end">
+                        <div className="chat-bubble">You underestimate my power!</div>
+                    </div>
                 </div>
             </div>
             <div className="flex">
