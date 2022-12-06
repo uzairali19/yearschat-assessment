@@ -23,6 +23,7 @@ function App() {
           setLoggedIn={setLoggedIn}
           setUsername={setUsername}
           socket={socket}
+          username={username}
         />
       </div>
   );

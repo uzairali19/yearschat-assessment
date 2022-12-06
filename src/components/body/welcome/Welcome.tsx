@@ -3,25 +3,29 @@ import {useState} from "react";
 interface welcomeProps {
     setLoggedIn: (loggedIn: boolean) => void;
     setUsername: (username: string) => void;
+    socket: any;
 }
 
-const Welcome: React.FC<welcomeProps> = ({ setLoggedIn, setUsername }) =>{
+const Welcome: React.FC<welcomeProps> = ({ setLoggedIn, setUsername, socket }) =>{
     const [name, setName] = useState("");
     const loginUser = async () =>{
         await fetch("http://localhost:3001/login", {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                username: name
+                username: name.replace(/\s+/g, ' ').trim()
             })
         })
         .then(res => res.json())
         .then(data => {
+            console.log(data)
             if(data.loggedIn){
                 setLoggedIn(true);
                 setUsername(name)
+                socket.emit('join_room', name)
             }
         })
         .catch(err => console.log(err))
