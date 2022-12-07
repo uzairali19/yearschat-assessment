@@ -1,6 +1,4 @@
-![](https://img.shields.io/badge/Microverse-blueviolet)
-
-# Twitter Clone
+# Years Chat Assessment
 
 > This is a Chat Application for Years Chat Assessment, Users can join a room, chat, edit and delete messages. However other users do get notify due to that. Have fun Chatting!!
 
