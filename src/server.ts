@@ -107,7 +107,7 @@ expressRouter
         }
     })
     .catch((err:any) => {
-        res.status(422).send(err.errors);
+        res.status(400).json({ errorMessage: err.errors[0] });
     })
 });
 
@@ -127,11 +127,12 @@ expressRouter
     res.status(200).json({ messages: db.messages });
 })
 .delete((req:any, res:any) => {
-    const { id, time } = req.body;
-    db.messages.forEach((message:any) => {
-        if (message.id === id) {
-            message.message = 'This message has been deleted';
-            message.time = time;
+    const { id, time,edited } = req.body;
+    db.messages.forEach((m:any) => {
+        if (m.id === id) {
+            m.message = 'This message has been deleted';
+            m.time = time;
+            m.edited = edited;
         }
     })
     res.status(200).json({ messages: db.messages });
@@ -157,8 +158,29 @@ io.on('connection', (socket:any) => {
         db.messages.push(messageData);
         socket.to('yearschat').emit('receive_message', messageData);
     })
+
     socket.on('delete_message', (data:any) => {
-        socket.to('yearschat').emit('receive_message', data);
+        const { id, time, edited,message } = data;
+        db.messages.forEach((m:any) => {
+            if (m.id === id) {
+                m.message = message;
+                m.time = time;
+                m.edited = edited;
+            }
+        });
+        socket.to('yearschat').emit('delete_message', data);
+    })
+
+    socket.on('edit_message', (data:any) => {
+        const { id, message, edited, time } = data;
+        db.messages.forEach((m:any) => {
+            if (m.id === id) {
+                m.message = message;
+                m.edited = edited;
+                m.time = time;
+            }
+        });
+        socket.to('yearschat').emit('edit_message', data);
     })
 });
 
