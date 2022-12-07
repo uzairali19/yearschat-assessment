@@ -20,43 +20,63 @@ const io = new Server(server, {
 
 const db:any = {
     users: [],
-    sessions: [
-        { sid: 'sid', userId: 1 }
-    ],
-    messages: [
-        { id: 1, text: 'Hello', userId: 1 },
-        { id: 2, text: 'Hi', userId: 2 },
-        { id: 3, text: 'How are you', userId: 1 },
-        { id: 4, text: 'I am fine',
-        userId: 2 },
-    ]
+    messages: []
 }
 
 // Middlewares
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(session({
-      secret: 'yearschat',
-      credentials: true,
-      name: "sid",
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        secure: "auto",
-        expires: 1000 * 60 * 60 * 24 * 7,
-        sameSite: process.env.ENVIRONMENT === "production" ? "none" : "lax",
-      },
-    })
-  );
-
 app.use(cors({
     origin: "http://localhost:3000",
     credentials: true
 }));
 
+app.use(session({
+    secret: 'yearschat',
+    credentials: true,
+    name: "sid",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        expires: 1000 * 60 * 60 * 24 * 7,
+    },
+  })
+);
+
+
+
 // Routes
-expressRouter.post('/login', (req:any, res:any) => {
+// Logout route
+expressRouter.route('/logout').get((req:any, res:any) => {
+    req.session.destroy((err:any) => {
+        if (err) {
+            return res.status(500
+            ).json({ message: 'Error logging out' });
+        }
+        res.clearCookie('sid');
+        return res.status(200).json({ loggedIn: false, username: null, userId: null });
+    });
+});
+
+
+// Login route
+expressRouter
+    .route('/login')
+    .get(async (req:any, res:any) => {
+        if (req.session.user) {
+            res.status(200).json({
+                loggedIn: true,
+                username: req.session.user.username,
+                userId: req.session.user.userId,
+                messages: db.messages
+            });
+        } else {
+            res.status(200).json({ loggedIn: false, username: null, userId: null });
+        }
+    })
+    .post(async (req:any, res:any) => {
     const { username } = req.body;
     user.validate({ username })
     .then((valid:any) => {
@@ -67,28 +87,54 @@ expressRouter.post('/login', (req:any, res:any) => {
                 userId: db.users[db.users.length - 1].id,
                 username: username
             }
-            res.status(200).json({ loggedIn: true, username: username });
+            res.status(200).json({
+                loggedIn: true,
+                username: username,
+                userId: db.users[db.users.length - 1].id,
+                messages: db.messages
+            });
         } else if (valid && user) {
             req.session.user = {
                 userId: user.id,
                 username: username
             }
-            res.status(200).json({ loggedIn: true, username: username });
+            res.status(200).json({
+                loggedIn: true,
+                username: username,
+                userId: user.id,
+                messages: db.messages
+            });
         }
-        console.log(req.session)
     })
     .catch((err:any) => {
         res.status(422).send(err.errors);
     })
 });
 
-expressRouter.post('/logout', (req:any, res:any) => {
-    req.session.destroy((err:any) => {
-        if (err) {
-            return res.status(422).send(err);
+
+// Message routes
+expressRouter
+.route('/message')
+.put((req:any, res:any) => {
+    const { id, message, edited, time } = req.body;
+    db.messages.forEach((m:any) => {
+        if (m.id === id) {
+            m.message = message;
+            m.edited = edited;
+            m.time = time;
         }
     })
-    res.status(200).json({ loggedIn:false, username: null });
+    res.status(200).json({ messages: db.messages });
+})
+.delete((req:any, res:any) => {
+    const { id, time } = req.body;
+    db.messages.forEach((message:any) => {
+        if (message.id === id) {
+            message.message = 'This message has been deleted';
+            message.time = time;
+        }
+    })
+    res.status(200).json({ messages: db.messages });
 })
 
 app.use(expressRouter);
@@ -100,12 +146,20 @@ io.on('connection', (socket:any) => {
     })
 
     socket.on('send_message', (data:any) => {
-        console.log(data)
+        const messageData = {
+            id: data.id,
+            message: data.message,
+            edited: data.edited,
+            userId: data.userId,
+            username: data.username,
+            time: data.time
+        }
+        db.messages.push(messageData);
+        socket.to('yearschat').emit('receive_message', messageData);
+    })
+    socket.on('delete_message', (data:any) => {
         socket.to('yearschat').emit('receive_message', data);
     })
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
 });
 
 
