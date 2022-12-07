@@ -1,16 +1,11 @@
-
-
-interface SelectProps {
-  theme: string
-  setTheme: (theme: string) => void
-}
+import { ThemeChildProps } from '../../types'
 
 const themes = ["light", "dark", "cupcake", "bumblebee", "emerald", "corporate", "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black", "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade", "night", "coffee", "winter"]
 
-const Select: React.FC<SelectProps> = ({ theme, setTheme }) => {
+const Select: React.FC<ThemeChildProps> = ({ theme, setTheme }) => {
 
     const handleSelect = (theme: string) => {
-        setTheme(theme)
+        setTheme?.(theme)
     }
 
   return (

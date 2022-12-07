@@ -1,11 +1,6 @@
 import { Select } from './select'
 import { Toggle } from './toggle'
-
-interface ThemeProps {
-    themeType: 'select' | 'toggle'
-    theme: string
-    setTheme: (theme: string) => void
-}
+import { ThemeProps } from '../types'
 
 const Theme: React.FC<ThemeProps> = ({ themeType,theme,setTheme }) => {
     return (

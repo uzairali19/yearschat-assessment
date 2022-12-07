@@ -1,18 +1,13 @@
 import { Theme } from "../theme";
+import { HeaderProps } from "../types";
 
-interface headerProps {
-  theme: string;
-  setTheme: (theme: string) => void;
-  loggedIn: boolean;
-  username: string;
-  setLoggedIn: (loggedIn: boolean) => void;
-}
 
-const Header: React.FC<headerProps> = ({ theme, setTheme, loggedIn, username, setLoggedIn}) => {
+const Header: React.FC<HeaderProps> = ({ theme, setTheme, loggedIn, username, setLoggedIn}) => {
 
   const logout = async () => {
     await fetch("http://localhost:3001/logout", {
-      method: "POST",
+      method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       }
@@ -20,7 +15,7 @@ const Header: React.FC<headerProps> = ({ theme, setTheme, loggedIn, username, se
     .then(res => res.json())
     .then(data => {
       if(data.loggedIn === false){
-        setLoggedIn(false);
+        setLoggedIn(data.loggedIn);
       }
     })
     .catch(err => console.log(err))

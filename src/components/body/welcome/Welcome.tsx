@@ -1,12 +1,7 @@
 import {useState} from "react";
+import { WelcomeProps } from "../../types";
 
-interface welcomeProps {
-    setLoggedIn: (loggedIn: boolean) => void;
-    setUsername: (username: string) => void;
-    socket: any;
-}
-
-const Welcome: React.FC<welcomeProps> = ({ setLoggedIn, setUsername, socket }) =>{
+const Welcome: React.FC<WelcomeProps> = ({ setLoggedIn, setUsername, socket, setUserId, setMessages }) =>{
     const [name, setName] = useState("");
     const loginUser = async () =>{
         await fetch("http://localhost:3001/login", {
@@ -16,15 +11,16 @@ const Welcome: React.FC<welcomeProps> = ({ setLoggedIn, setUsername, socket }) =
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                username: name.replace(/\s+/g, ' ').trim()
+                username: name.replace(/\s+/g, ' ').trim().toLocaleLowerCase()
             })
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data)
             if(data.loggedIn){
                 setLoggedIn(true);
                 setUsername(name)
+                setUserId(data.userId)
+                setMessages(data.messages)
                 socket.emit('join_room', name)
             }
         })

@@ -1,11 +1,8 @@
-interface ToggleProps {
-  theme: string
-  setTheme: (theme: string) => void
-}
+import { ThemeChildProps } from "../../types";
 
-const Toggle: React.FC<ToggleProps> = ({ theme, setTheme }) => {
+const Toggle: React.FC<ThemeChildProps> = ({ theme, setTheme }) => {
   const handleToggle = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    setTheme?.(theme === "light" ? "dark" : "light");
   };
   return (
     <label className="swap swap-rotate">
