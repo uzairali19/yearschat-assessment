@@ -38,6 +38,11 @@ export interface ChatProps {
     messages: any;
   }
 
+export interface LoginProps {
+    loggedIn: boolean;
+    setLoggedIn: (loggedIn: boolean) => void;
+}
+
 export interface HeaderProps {
     theme: string;
     setTheme: (theme: string) => void;
@@ -45,3 +50,18 @@ export interface HeaderProps {
     username: string;
     setLoggedIn: (loggedIn: boolean) => void;
   }
+
+export interface LoginInputProps {
+    loginUser : () => void;
+    name: string;
+    setName: (name: string) => void;
+}
+
+export interface BubbleProps {
+    message: any;
+    userId: string;
+    showMessageOptions: {show: boolean, id: string};
+    editMessage: (messageId: string, message: string) => void;
+    handleDeleteMessage: (messageId: string) => void;
+    handleMessageClick: (messageId: string) => void;
+}

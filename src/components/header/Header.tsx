@@ -1,6 +1,18 @@
 import { Theme } from "../theme";
 import { HeaderProps } from "../types";
+import styled from 'styled-components'
 
+const StyledHeader = styled.div.attrs({
+  className: "navbar bg-primary text-base-400",
+})`
+& a: {
+    color: #fff;
+  },
+  button: {
+    color: #fff;
+  }
+
+`
 
 const Header: React.FC<HeaderProps> = ({ theme, setTheme, loggedIn, username, setLoggedIn}) => {
 
@@ -21,19 +33,26 @@ const Header: React.FC<HeaderProps> = ({ theme, setTheme, loggedIn, username, se
     .catch(err => console.log(err))
   }
 
+  const capitalCase = (str: string) => {
+    str = str.toLowerCase();
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
+
   return (
-  <div className="navbar bg-base-100">
+  <StyledHeader>
     <div className="navbar-start">
       <a className="normal-case text-xl">
         Years Chat{loggedIn ? ',': null}
-        <span className="capitalize text-sm pl-1">{loggedIn ? `logged in as ${username}` : null}</span>
+        <span className="capitalize text-sm pl-1">{loggedIn ? `logged in as ${capitalCase(username)}` : null}</span>
       </a>
     </div>
     <div className="navbar-end">
       <Theme themeType="toggle" theme={theme} setTheme={setTheme}  />
       {loggedIn ? <button className="btn btn-ghost" onClick={logout}>Logout</button> : null}
     </div>
-  </div>);
+  </StyledHeader>
+  )
 }
 
 export default Header;

@@ -1,9 +1,17 @@
+import React, { useEffect } from "react";
 import { ThemeChildProps } from "../../types";
 
 const Toggle: React.FC<ThemeChildProps> = ({ theme, setTheme }) => {
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const handleToggle = () => {
-    setTheme?.(theme === "light" ? "dark" : "light");
+    setTheme?.(theme === "years" ? "dark" : "years");
   };
+  
+  useEffect(() => {
+    if (prefersDark) {
+      setTheme?.("dark");
+    }
+  }, [prefersDark, setTheme]);
   return (
     <label className="swap swap-rotate">
       <input type="checkbox" onChange={handleToggle} />

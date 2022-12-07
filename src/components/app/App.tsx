@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 const socket = io("http://localhost:3001");
 
 const App:React.FC = () => {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState('years');
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,10 +33,13 @@ const App:React.FC = () => {
       fetchData().catch(err => console.log(err)).finally(() => setLoading(false));
     }, [])
 
-  return (
-      <div data-theme={theme} className=" min-h-screen">
-        {loading ? <div className="loading">Loading...</div> :
-        <>
+  return loading ?(
+  <div data-theme={theme} className="min-h-screen">
+    <div className="flex flex-col min-h-screen justify-center items-center">
+      <progress className="progress w-80 progress-warning"></progress>
+    </div>
+  </div>) : (
+        <div data-theme={theme} className="min-h-screen">
           <Header
             theme={theme}
             setTheme={setTheme}
@@ -54,9 +57,7 @@ const App:React.FC = () => {
             messages={messages}
             setMessages={setMessages}
           />
-        </>
-        }
-      </div>
+        </div>
   );
 }
 
