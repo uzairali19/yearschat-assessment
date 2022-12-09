@@ -20,7 +20,7 @@ To get a local copy up and running follow these simple example steps:
 - run `git clone https://github.com/uzairali19/yearschat-assessment.git yearschat-client`
 - run `git clone https://github.com/uzairali19/yearschat-assessment.git yearschat-server`
 - Then run `cd yearschat-client && git checkout frontend && yarn && yarn dev`
-- In a new terminal window run `cd yearschat-client && git checkout backend && yarn && yarn dev`
+- In a new terminal window run `cd yearschat-server && git checkout backend && yarn && yarn dev`
 - Navigate to `http://localhost:3000` on a browser open in incognito too, have fun!!
 ## Authors
 
